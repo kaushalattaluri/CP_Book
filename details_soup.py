@@ -593,6 +593,7 @@ class UserData:
 
         raise PlatformError('Platform not Found')
     def register(self,platform):
+        # temp handling it with splitting at _ will be changed to json 
         handels = self.__username.split('_')
         ans = {}
         cf = handels[0]
