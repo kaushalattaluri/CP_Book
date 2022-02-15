@@ -8,7 +8,7 @@ import os
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-
+from pymongo import MongoClient
 from util import get_safe_nested_key
 
 
@@ -664,12 +664,17 @@ class UserData:
         
         return {'status': 'Success','response':ans}
 
+def update():
+    client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+    db = client.get_database('debuggers')
+    records = db.all_users
+    all_users = list(records.find())
+    print(all_users)
 
 
 if __name__ == '__main__':
     ud = UserData('uwi')
     ans = ud.get_details('leetcode')
-
     print(ans)
 
     # leetcode backward compatibility test. Commenting it out as it will fail in future
