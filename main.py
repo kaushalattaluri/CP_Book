@@ -1,10 +1,11 @@
 from flask import Flask, render_template
 from flask_restful import Api, Resource
 from flask_cors import CORS
-
+import threading
 from details_soup import UserData, UsernameError, PlatformError, BrokenChangesError
 from send_mail import Mail
-
+from details_soup import update
+from requests.utils import DEFAULT_CA_BUNDLE_PATH 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -49,6 +50,20 @@ api.add_resource(Details,'/api/<string:platform>/<string:username>')
 def invalid_route(e):
     return render_template('404.html')
 
+def runapi():
+    print('hey')
+    app.run()
+def updatedb():
+    from apscheduler.schedulers.blocking import BlockingScheduler
+    scheduler = BlockingScheduler()
+    scheduler.add_job(update, "interval", hours=12)
+    scheduler.start()
 
 if __name__ == '__main__':
-    app.run()
+    t1 = threading.Thread(target=runapi)
+    t2 = threading.Thread(target=updatedb)
+    t1.start()
+    t2.start()
+    t1.join()
+    # starting thread 2
+    t2.join()
