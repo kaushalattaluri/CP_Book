@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from pymongo import MongoClient
 from util import get_safe_nested_key
-
+import threading
 
 class UsernameError(Exception):
     pass
@@ -298,7 +298,7 @@ class UserData:
         soup = BeautifulSoup(page.text, 'html.parser')
         details_main = soup.find('div', class_='user-stats')
         details_container = details_main.findChildren('div', recursive=False)
-
+        print(details_container)
         details = {'status': 'Success', 'username': self.__username, 'platform': 'Interviewbit',
                    'rank': int(details_container[0].find('div', class_='txt').text),
                    'score': int(details_container[1].find('div', class_='txt').text),
@@ -664,12 +664,85 @@ class UserData:
         
         return {'status': 'Success','response':ans}
 
+
+
 def update():
     client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
     db = client.get_database('debuggers')
     records = db.all_users
     all_users = list(records.find())
-    print(all_users)
+    for x in all_users:
+        cf = x['Handels']['codeforces']['name']
+        codechef = x['Handels']['codechef']['name']
+        spoj = x['Handels']['spoj']['name']
+        ib = x['Handels']['interview_bit']['name']
+        lc = x['Handels']['leetcode']['name']
+        ac = x['Handels']['atcoder']['name']
+        update = x
+        if len(cf) > 0:
+            tud = UserData(cf)    
+            #t1 = threading.Thread(target=tud.get_details,args = ('codeforces',))
+            #t1.start()
+        try:
+            t1ans = tud.get_details('codeforces')
+            print(t1ans)
+            contests = t1ans['contests']
+            cfpc = 0
+            for y in contests:
+                cfpc+=int(y['Solved'])
+            print(cfpc)
+            update['Handels']['codeforces']['pc'] = str(cfpc)
+        except:
+            print('exception')
+            pass
+        if len(codechef) > 0:
+            tcodechef = UserData(codechef)
+        try:
+            t2ans = tcodechef.get_details('codechef')
+            cffs = t2ans["fully_solved"]['count']
+            update['Handels']['codechef']['pc'] = str(cffs)
+        except:
+            print('exception')
+        
+        if len(spoj) > 0:
+            tspoj =  UserData(spoj)
+        try:
+            t3ans = tspoj.get_details('spoj')
+            spojfs = len(t3ans["solved"])
+            update['Handels']['spoj']['pc'] = str(spojfs)
+        except:
+            print('exception')
+
+        if len(ib)>0:
+            pass
+
+        if len(lc)>0:
+            tlc = UserData(lc)
+        try:
+            t4ans = tlc.get_details('leetcode')
+            lcfs = t4ans["total_problems_solved"]
+            update['Handels']['leetcode']['pc'] = str(lcfs)
+        except:
+            print('exception')
+
+        # if len(ac)>0:
+        #     tac = UserData(ac)
+        # try:
+        #     t5ans = tac.get_details('atcoder')
+        #     acfs = t5ans["total_problems_solved"]
+        #     update['Handels']['atcoder']['pc'] = str(acfs)
+        # except:
+        #     print('exception')
+
+
+
+        email = x['Email']
+        records.update_one({'Email':email},{'$set':update})
+        print('done')
+
+            
+
+
 
 
 if __name__ == '__main__':

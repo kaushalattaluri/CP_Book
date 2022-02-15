@@ -54,7 +54,10 @@ def runapi():
     print('hey')
     app.run()
 def updatedb():
-    update()
+    from apscheduler.schedulers.blocking import BlockingScheduler
+    scheduler = BlockingScheduler()
+    scheduler.add_job(update, "interval", hours=12)
+    scheduler.start()
 
 if __name__ == '__main__':
     t1 = threading.Thread(target=runapi)
