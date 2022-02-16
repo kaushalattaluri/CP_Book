@@ -1,0 +1,37 @@
+const Students = [{
+    userName: "Uday",
+    collegeName: "Vasavi",
+    departmentName: "IT",
+    codeforces: 5,
+    codechef: 6,
+    atcoder: 7,
+    leetcode: 8,
+  },
+  {
+    userName: "Nikhil",
+    collegeName: "Vasavi",
+    departmentName: "IT",
+    codeforces: 6,
+    codechef: 7,
+    atcoder: 5,
+    leetcode: 4,
+  },
+  {
+    userName: "Uday2",
+    collegeName: "Vasavi",
+    departmentName: "CSE",
+    codeforces: 4,
+    codechef: 6,
+    atcoder: 5,
+    leetcode: 9,
+  },
+  {
+    userName: "Nikhil2",
+    collegeName: "Vasavi",
+    departmentName: "CSE",
+    codeforces: 3,
+    codechef: 9,
+    atcoder: 7,
+    leetcode: 8,
+  }];
+  export default Students;
