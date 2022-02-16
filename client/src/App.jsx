@@ -6,6 +6,7 @@ import UpdateProfile from './components/UpdateProfile';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
+import Dashboard from "./components/dashboard";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
       <Switch>
         <Route exact path={["/", "/login", "/signup"]} component={HomePage} />
 
-        <Route exact path={["/dashboard"]} component={Parent} />
+        <Route exact path={["/dashboard"]} component={Dashboard} />
+        <Route exact path={["/tables"]} component={Parent} />
 
         <Route exact path={["/update"]} component={UpdateProfile} />
       </Switch>
