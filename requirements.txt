@@ -8,4 +8,4 @@ pymongo==4.0.1
 requests==2.26.0
 selenium==4.1.0
 gunicorn==20.1.0
-"pymongo[srv]"
+pymongo[srv]
