@@ -6,7 +6,7 @@ import TableFooter from "./TableFooter";
 const Table = ({ update, data, rowsPerPage }) => {
   const [page, setPage] = useState(1);
   const { slice, range } = useTable(data, page, rowsPerPage);
-  const headerNames = ["userName", "codechef", "codeforces", "atcoder", "leetcode"];
+  const headerNames = ["userName", "codechef", "codeforces", "atcoder", "leetcode", "total"];
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "70%" }}>
       <table className={styles.table}>
@@ -14,7 +14,7 @@ const Table = ({ update, data, rowsPerPage }) => {
           <tr>
             {
               headerNames.map((headerName) => (
-                <th className={styles.tableHeader} key={headerName} onClick={(e) => update(headerName)}>{headerName}</th>
+                <th className={styles.tableHeader} key={headerName} onClick={(e) => update(headerName)}>{headerName.toUpperCase()}</th>
               ))
             }
           </tr>

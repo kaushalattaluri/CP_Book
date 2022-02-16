@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import FilterComponent from "./filter";
 import Table from "./Table/index";
 var studentsData = [];
+const headerNames = ["codechef", "codeforces", "atcoder", "spoj", "interviewbit", "leetcode"];
 const Parent = () => {
   const [filteredStudentsData, setFilteredStudentsData] = useState([]);
   const [collegesList, setCollegesList] = useState([]);
@@ -11,15 +12,20 @@ const Parent = () => {
     console.log(query);
     for (let i = 0; i < studentsData.length; i++) {
       if (
-        (!query.userName || query.userName === studentsData[i].userName) &&
+        (!query.userName || query.userName.toLowerCase() === studentsData[i].userName.toLowerCase()) &&
         (!query.collegeName ||
           query.collegeName === studentsData[i].collegeName) &&
         (!query.departmentName ||
           query.departmentName === studentsData[i].departmentName)
       ) {
-        temp.push(studentsData[i]);
+        let total = 0;
+        for (var headerName of headerNames) {
+          total += studentsData[i][headerName];
+        }
+        temp.push({...studentsData[i], total: total});
       }
     }
+    temp.sort((a, b) => b.total - a.total);
     setFilteredStudentsData(temp);
   };
   async function initialize() {
@@ -40,6 +46,7 @@ const Parent = () => {
     }
     setCollegesList([...collegesListSet]);
     setDepartmentsList([...departmentsListSet]);
+    handleSubmit({userName:"", collegeName:"", departmentName:""});
   }
   useEffect(() => {
     initialize();
