@@ -861,6 +861,15 @@ class UserData:
             records.update_one({'email':email},{'$set':doc})
         return {'status': 'Success','response':ans}
 
+    def user_details(self,email):
+        from pymongo import MongoClient
+        client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+        db = client.get_database('debuggers')
+        records = db.users
+        all_users = records.find_one({'email':email})
+        ans = all_users['handles']
+        return {'status': 'Success','name':all_users['name'],'response':ans}
+
     
 
 
