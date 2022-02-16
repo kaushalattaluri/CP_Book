@@ -868,6 +868,10 @@ class UserData:
         records = db.users
         all_users = records.find_one({'email':email})
         ans = all_users['handles']
+        for x in ans.keys():
+            for y in ans[x].keys():
+                if ans[x][y] == '' and y=='pc':
+                    ans[x][y] = 0
         return {'status': 'Success','name':all_users['name'],'response':ans}
 
     
