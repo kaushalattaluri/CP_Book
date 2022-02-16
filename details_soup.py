@@ -11,7 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from pymongo import MongoClient
 from util import get_safe_nested_key
 import threading
-
+import json
 class UsernameError(Exception):
     pass
 
@@ -594,14 +594,40 @@ class UserData:
         raise PlatformError('Platform not Found')
     def register(self,platform):
         # temp handling it with splitting at _ will be changed to json 
-        handels = self.__username.split('_')
+        import urllib.parse
+        print(self.__username)
+        details = self.__username.split('&')
+        print(details)
+        name = details[0].split('=')
+        name = name[1]
+        email = details[1].split('=')
+        email = email[1]
+        password = details[2].split('=')
+        password = password[1]
+        mobile = details[3].split('=')
+        mobile = mobile[1]
+        college = details[4].split('=')
+        college = college[1]
+        dept = details[5]
+        dept = dept[1]
+
+        handles = details[-1]
+        handles = urllib.parse.unquote(handles)
+        handles = handles.replace("handles=","")
+        try:
+            handles = json.loads(handles)
+            print(handles)
+        except:
+            print(handles)
+
         ans = {}
-        cf = handels[0]
-        codechef = handels[1]
-        spoj = handels[2]
-        ib = handels[3]
-        lc = handels[4]
-        ac = handels[5] 
+        cf = handles['codeforces']
+        codechef = handles['codechef']
+        spoj = handles['spoj']
+        ib = handles['interview_bit']
+        lc = handles['leetcode']
+        ac = handles['atcoder'] 
+        flag = 1
         try:
             self.update_username(cf)
             ans['codeforces'] = 1
@@ -611,6 +637,7 @@ class UserData:
                 ans['codeforces'] = 1
             else:
                 ans['codeforces'] = 0
+                flag = 0
         
         try:
             self.update_username(codechef)
@@ -621,6 +648,7 @@ class UserData:
                 ans['codechef'] = 1
             else:
                 ans['codechef'] = 0
+                flag = 0
         
         try:
             self.update_username(spoj)
@@ -631,6 +659,7 @@ class UserData:
                 ans['spoj'] = 1
             else:
                 ans['spoj'] = 0
+                flag = 0
         
         try:
             self.update_username(ib)
@@ -641,7 +670,7 @@ class UserData:
                 ans['interview bit'] = 1
             else:
                 ans['interview bit'] = 0
-        
+                flag = 0
         try:
             self.update_username(lc)
             ans['leetcode'] = 1
@@ -651,7 +680,7 @@ class UserData:
                 ans['leetcode'] = 1
             else:
                 ans['leetcode'] = 0
-        
+                flag = 0
         try:
             self.update_username(ac)
             ans['atcoder'] = 1
@@ -661,23 +690,193 @@ class UserData:
                 ans['atcoder'] = 1
             else:
                 ans['atcoder'] = 0
+                flag = 0
+        if flag == 1:
+            from pymongo import MongoClient
+            client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+            db = client.get_database('debuggers')
+            records = db.users
+            all_users = list(records.find())
+            doc = {"name":name,"email":email,"password":password,"mobile":mobile,"college":college,"dept":dept,
+            "handles":{"codechef":{"name":codechef,"pc":'0'},
+            "codeforces":{"name":cf,"pc":'0'},
+            "spoj":{"name":spoj,"pc":'0'},
+            "interview_bit":{"name":ib,"pc":'0'},
+            "leetcode":{"name":lc,"pc":'0'},
+            "atcoder":{"name":ac,"pc":'0'}}}
+            records.insert_one(doc)
+        return {'status': 'Success','response':ans}
+    def all_users(self):
+        client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+        db = client.get_database('debuggers')
+        records = db.users
+        all_users = list(records.find())
+        fans = []
+        for x in all_users:
+            ans = {}
+            ans['userName'] = x['name']
+            ans['email'] = x['email']
+            ans['collegeName'] = x['college']
+            ans['departmentName'] = x['dept']
+            try:
+                ans['codechef'] = int(x['handles']['codechef']['pc'])
+            except:
+                ans['codechef'] = 0
+            try:
+                ans['codeforces'] = int(x['handles']['codeforces']['pc'])
+            except:
+                ans['codeforces'] = 0
+            try:
+                ans['spoj'] = int(x['handles']['spoj']['pc'])
+            except:
+                ans['spoj'] = 0 
+            try:
+                ans['interviewbit'] = int(x['handles']['interviewbit']['pc'])
+            except:
+                ans['interviewbit'] = 0
+            try:
+                ans['leetcode'] = int(x['handles']['leetcode']['pc'])
+            except:
+                ans['leetcode'] = 0
+            try:
+                ans['atcoder'] = int(x['handles']['atcoder']['pc'])
+            except:
+                ans['atcoder'] = 0
+            fans.append(ans)
+        return {'status': 'Success','response':fans}
+    def user_update(self):
+        import urllib.parse
+        print(self.__username)
+        details = self.__username.split('&')
+        print(details)
+        name = details[0].split('=')
+        name = name[1]
+        email = details[1].split('=')
+        email = email[1]
+        try:
+            password = details[2].split('=')
+            password = password[1]
+            mobile = details[3].split('=')
+            mobile = mobile[1]
+            college = details[4].split('=')
+            college = college[1]
+            dept = details[5]
+            dept = dept[1]
+        except:
+            pass
+
+        handles = details[-1]
+        handles = urllib.parse.unquote(handles)
+        handles = handles.replace("handles=","")
+        try:
+            handles = json.loads(handles)
+            print(handles)
+        except:
+            print(handles)
+
+        ans = {}
+        cf = handles['codeforces']
+        codechef = handles['codechef']
+        spoj = handles['spoj']
+        ib = handles['interview_bit']
+        lc = handles['leetcode']
+        ac = handles['atcoder'] 
+        flag = 1
+        try:
+            self.update_username(cf)
+            ans['codeforces'] = 1
+            tans = self.__codeforces()
+        except:
+            if len(cf) == 0:
+                ans['codeforces'] = 1
+            else:
+                ans['codeforces'] = 0
+                flag = 0
         
+        try:
+            self.update_username(codechef)
+            ans['codechef'] = 1
+            tans = self.__codechef()
+        except:
+            if len(codechef) == 0:
+                ans['codechef'] = 1
+            else:
+                ans['codechef'] = 0
+                flag = 0
+        
+        try:
+            self.update_username(spoj)
+            ans['spoj'] = 1
+            tans = self.__spoj()
+        except:
+            if len(spoj)==0:
+                ans['spoj'] = 1
+            else:
+                ans['spoj'] = 0
+                flag = 0
+        
+        try:
+            self.update_username(ib)
+            ans['interview bit'] = 1
+            tans = self.__interviewbit()
+        except:
+            if len(ib) ==0:
+                ans['interview bit'] = 1
+            else:
+                ans['interview bit'] = 0
+                flag = 0
+        try:
+            self.update_username(lc)
+            ans['leetcode'] = 1
+            tans = self.__leetcode_v2()
+        except:
+            if len(lc)==0:
+                ans['leetcode'] = 1
+            else:
+                ans['leetcode'] = 0
+                flag = 0
+        try:
+            self.update_username(ac)
+            ans['atcoder'] = 1
+            tans = self.__atcoder()
+        except:
+            if len(ac)==0:
+                ans['atcoder'] = 1
+            else:
+                ans['atcoder'] = 0
+                flag = 0
+        if flag == 1:
+            from pymongo import MongoClient
+            client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+            db = client.get_database('debuggers')
+            records = db.users
+            all_users = list(records.find())
+            doc = {
+            "handles":{"codechef":{"name":codechef,"pc":'0'},
+            "codeforces":{"name":cf,"pc":'0'},
+            "spoj":{"name":spoj,"pc":'0'},
+            "interview_bit":{"name":ib,"pc":'0'},
+            "leetcode":{"name":lc,"pc":'0'},
+            "atcoder":{"name":ac,"pc":'0'}}}
+            records.update_one({'email':email},{'$set':doc})
         return {'status': 'Success','response':ans}
 
+    
 
 
 def update():
     client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
     db = client.get_database('debuggers')
-    records = db.all_users
+    records = db.users
     all_users = list(records.find())
+
     for x in all_users:
-        cf = x['Handels']['codeforces']['name']
-        codechef = x['Handels']['codechef']['name']
-        spoj = x['Handels']['spoj']['name']
-        ib = x['Handels']['interview_bit']['name']
-        lc = x['Handels']['leetcode']['name']
-        ac = x['Handels']['atcoder']['name']
+        cf = x['handles']['codeforces']['name']
+        codechef = x['handles']['codechef']['name']
+        spoj = x['handles']['spoj']['name']
+        ib = x['handles']['interview_bit']['name']
+        lc = x['handles']['leetcode']['name']
+        ac = x['handles']['atcoder']['name']
         update = x
         if len(cf) > 0:
             tud = UserData(cf)    
@@ -691,7 +890,7 @@ def update():
             for y in contests:
                 cfpc+=int(y['Solved'])
             print(cfpc)
-            update['Handels']['codeforces']['pc'] = str(cfpc)
+            update['handles']['codeforces']['pc'] = str(cfpc)
         except:
             print('exception')
             pass
@@ -700,7 +899,7 @@ def update():
         try:
             t2ans = tcodechef.get_details('codechef')
             cffs = t2ans["fully_solved"]['count']
-            update['Handels']['codechef']['pc'] = str(cffs)
+            update['handles']['codechef']['pc'] = str(cffs)
         except:
             print('exception')
         
@@ -709,7 +908,7 @@ def update():
         try:
             t3ans = tspoj.get_details('spoj')
             spojfs = len(t3ans["solved"])
-            update['Handels']['spoj']['pc'] = str(spojfs)
+            update['handles']['spoj']['pc'] = str(spojfs)
         except:
             print('exception')
 
@@ -721,7 +920,7 @@ def update():
         try:
             t4ans = tlc.get_details('leetcode')
             lcfs = t4ans["total_problems_solved"]
-            update['Handels']['leetcode']['pc'] = str(lcfs)
+            update['handles']['leetcode']['pc'] = str(lcfs)
         except:
             print('exception')
 
@@ -730,14 +929,14 @@ def update():
         # try:
         #     t5ans = tac.get_details('atcoder')
         #     acfs = t5ans["total_problems_solved"]
-        #     update['Handels']['atcoder']['pc'] = str(acfs)
+        #     update['handles']['atcoder']['pc'] = str(acfs)
         # except:
         #     print('exception')
 
 
 
-        email = x['Email']
-        records.update_one({'Email':email},{'$set':update})
+        email = x['email']
+        records.update_one({'email':email},{'$set':update})
         print('done')
 
             

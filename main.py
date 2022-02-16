@@ -26,6 +26,34 @@ class Details(Resource):
             
             except BrokenChangesError:
                 return {'status': 'Failed', 'details': 'API broken due to site changes'}
+        
+        if platform == 'all_users':
+            user_data = UserData()
+            try:
+                return user_data.all_users()
+
+            except UsernameError:
+                return {'status': 'Failed', 'details': 'Invalid username'}
+
+            except PlatformError:
+                return {'status': 'Failed', 'details': 'Invalid Platform'}
+            
+            except BrokenChangesError:
+                return {'status': 'Failed', 'details': 'API broken due to site changes'}
+        if platform == 'user_update':
+            user_data = UserData(username)
+            try:
+                return user_data.user_update()
+
+            except UsernameError:
+                return {'status': 'Failed', 'details': 'Invalid username'}
+
+            except PlatformError:
+                return {'status': 'Failed', 'details': 'Invalid Platform'}
+            
+            except BrokenChangesError:
+                return {'status': 'Failed', 'details': 'API broken due to site changes'}
+
         else:
             user_data = UserData(username)
             print(platform,username)
@@ -56,7 +84,7 @@ def runapi():
 def updatedb():
     from apscheduler.schedulers.blocking import BlockingScheduler
     scheduler = BlockingScheduler()
-    scheduler.add_job(update, "interval", hours=12)
+    scheduler.add_job(update, "interval", minutes=15)
     scheduler.start()
 
 if __name__ == '__main__':
