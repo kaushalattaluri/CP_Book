@@ -705,6 +705,7 @@ class UserData:
             "leetcode":{"name":lc,"pc":'0'},
             "atcoder":{"name":ac,"pc":'0'}}}
             records.insert_one(doc)
+            update_one(email)
         return {'status': 'Success','response':ans}
     def all_users(self):
         client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
@@ -859,6 +860,7 @@ class UserData:
             "leetcode":{"name":lc,"pc":'0'},
             "atcoder":{"name":ac,"pc":'0'}}}
             records.update_one({'email':email},{'$set':doc})
+            update_one(email)
         return {'status': 'Success','response':ans}
 
     def user_details(self,email):
@@ -974,6 +976,81 @@ def update():
         records.update_one({'email':email},{'$set':update})
         print('done')
 
+
+def update_one(email):
+    client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+    db = client.get_database('debuggers')
+    records = db.users
+    all_users = list(records.find({'email':email}))
+
+    for x in all_users:
+        cf = x['handles']['codeforces']['name']
+        codechef = x['handles']['codechef']['name']
+        spoj = x['handles']['spoj']['name']
+        ib = x['handles']['interview_bit']['name']
+        lc = x['handles']['leetcode']['name']
+        ac = x['handles']['atcoder']['name']
+        update = x
+        if len(cf) > 0:
+            tud = UserData(cf)    
+            #t1 = threading.Thread(target=tud.get_details,args = ('codeforces',))
+            #t1.start()
+        try:
+            t1ans = tud.get_details('codeforces')
+            print(t1ans)
+            contests = t1ans['contests']
+            cfpc = 0
+            for y in contests:
+                cfpc+=int(y['Solved'])
+            print(cfpc)
+            update['handles']['codeforces']['pc'] = str(cfpc)
+        except:
+            print('exception')
+            pass
+        if len(codechef) > 0:
+            tcodechef = UserData(codechef)
+        try:
+            t2ans = tcodechef.get_details('codechef')
+            cffs = t2ans["fully_solved"]['count']
+            update['handles']['codechef']['pc'] = str(cffs)
+        except:
+            print('exception')
+        
+        if len(spoj) > 0:
+            tspoj =  UserData(spoj)
+        try:
+            t3ans = tspoj.get_details('spoj')
+            spojfs = len(t3ans["solved"])
+            update['handles']['spoj']['pc'] = str(spojfs)
+        except:
+            print('exception')
+
+        if len(ib)>0:
+            pass
+
+        if len(lc)>0:
+            tlc = UserData(lc)
+        try:
+            t4ans = tlc.get_details('leetcode')
+            lcfs = t4ans["total_problems_solved"]
+            update['handles']['leetcode']['pc'] = str(lcfs)
+        except:
+            print('exception')
+
+        # if len(ac)>0:
+        #     tac = UserData(ac)
+        # try:
+        #     t5ans = tac.get_details('atcoder')
+        #     acfs = t5ans["total_problems_solved"]
+        #     update['handles']['atcoder']['pc'] = str(acfs)
+        # except:
+        #     print('exception')
+
+
+
+        email = x['email']
+        records.update_one({'email':email},{'$set':update})
+        print('done')
             
 
 
