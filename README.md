@@ -31,3 +31,8 @@ Our Application called as CP Book displays cp handles of CP Enthusiasts which ha
 
 * Also recommend problems to the user based on his current rating level and peroformance using machine learning algorithms.
 
+## Technologies
+
+* Backend - Mongo DB
+* Frontend - React JS
+* API's - CP Platforms
