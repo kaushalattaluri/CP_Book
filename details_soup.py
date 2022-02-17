@@ -608,7 +608,7 @@ class UserData:
         mobile = mobile[1]
         college = details[4].split('=')
         college = college[1]
-        dept = details[5]
+        dept = details[5].split('=')
         dept = dept[1]
 
         handles = details[-1]
