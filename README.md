@@ -24,7 +24,7 @@ Our Application called as CP Book displays cp handles of CP Enthusiasts which ha
 * Backend Part
   -> Handling the requests properly.
 
-* Including Analytics such as graphs (rating,imprvomenet), bar graphs, pie charts using machine learning.
+* Including Analytics such as graphs (rating,imprvomenet), bar graphs, pie charts.
 
-* Also recommend problems to the user based on his current rating level and peroformance.
+* Also recommend problems to the user based on his current rating level and peroformance using machine learning algorithms.
 
