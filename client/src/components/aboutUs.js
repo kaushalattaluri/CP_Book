@@ -13,7 +13,7 @@ const AboutUs = () => {
                   <div className="d-flex flex-column h-100">
                     <p className="mb-1 pt-2 text-bold">Built by DeBuggers</p>
                     <h5 className="font-weight-bolder">CP BOOK</h5>
-                    <p className="mb-5">From colors, cards, typography to complex elements, you will find the full documentation.</p>
+                    <p className="mb-5">Displays functionalities like leaderboard,checks if the user is genuine and gives chance to update in vibrant colors.</p>
                     <a className="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
                       Read More
                       <i className="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
