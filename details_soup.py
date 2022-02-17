@@ -866,13 +866,35 @@ class UserData:
         client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
         db = client.get_database('debuggers')
         records = db.users
-        all_users = records.find_one({'email':email})
-        ans = all_users['handles']
-        for x in ans.keys():
-            for y in ans[x].keys():
-                if ans[x][y] == '' and y=='pc':
-                    ans[x][y] = 0
-        return {'status': 'Success','name':all_users['name'],'response':ans}
+        try:
+            all_users = records.find_one({'email':email})
+            ans = all_users['handles']
+            for x in ans.keys():
+                for y in ans[x].keys():
+                    if ans[x][y] == '' and y=='pc':
+                        ans[x][y] = 0
+            return {'status': 'Success','name':all_users['name'],'response':ans}
+        except:
+            return {'status':'Invalid email'}
+    
+    def login(self,username):
+        from pymongo import MongoClient
+        client = MongoClient("mongodb+srv://test:test@cluster0.zppnq.mongodb.net/debuggers?retryWrites=true&w=majority")
+        db = client.get_database('debuggers')
+        records = db.users
+        print(username)
+        username = username.split('&')
+        email = username[0].split('=')
+        email = email[1]
+        password = username[1].split('=')
+        password = password[1]
+        try:
+            all_users = records.find_one({'email':email,'password':password})
+            del all_users['_id']
+            print(all_users)
+            return {'response':all_users}
+        except:
+            return {'status':'failed'}
 
     
 
