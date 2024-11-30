@@ -5,15 +5,16 @@ https://debuggers.netlify.app/
 Our Application called as CP Book displays cp handles of CP Enthusiasts which has functionalities like:
 * Displays the sorted leaderboard of the students and also sorts based on Platform.
 * Checks if the user handles are genuine or not.
-* Gives a chance for the user to update the handles.
+* Gives a chance for the user to update the handles. (Existing online platforms in the market don't give this option).
+* Based on the current rating of the user, the platform suggests what problems to do based on ML algorithms.
 
 
 ## Platforms Available 
 * Codeforces
 * Codechef
 * SPOJ
-* Interviewbit (new)
-* Leetcode (new)
+* Interviewbit (new) (Existing online platforms don't have this)
+* Leetcode (new) (Existing online platforms don't have this)
 * Atcoder
 
 
